@@ -60,6 +60,7 @@ public class LegacyDataPointSearchController {
             @PathVariable("shim") String shim,
             @PathVariable("dataType") String dataTypeKey,
             @RequestParam(value = "normalize", defaultValue = "true") boolean normalize,
+            @RequestParam(value="includeRaw",defaultValue = "false") boolean includeRaw,
             @RequestParam(value = "dateStart", defaultValue = "") String dateStart,
             @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd)
             throws ShimException {
@@ -70,6 +71,7 @@ public class LegacyDataPointSearchController {
 
         shimDataRequest.setDataTypeKey(dataTypeKey);
         shimDataRequest.setNormalize(normalize);
+        shimDataRequest.setIncludeRaw(includeRaw);
 
         if (!dateStart.isEmpty()) {
             shimDataRequest.setStartDateTime(LocalDate.parse(dateStart).atStartOfDay().atOffset(UTC));

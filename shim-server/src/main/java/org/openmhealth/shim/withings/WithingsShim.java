@@ -18,6 +18,7 @@ package org.openmhealth.shim.withings;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -72,9 +73,9 @@ public class WithingsShim extends OAuth1ShimBase {
 
     @Autowired
     public WithingsShim(ApplicationAccessParametersRepo applicationParametersRepo,
-            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            ShimServerConfig shimServerConfig,
-            AccessParametersRepo accessParametersRepo) {
+                        AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                        ShimServerConfig shimServerConfig,
+                        AccessParametersRepo accessParametersRepo) {
 
         super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig, accessParametersRepo);
 
@@ -142,7 +143,9 @@ public class WithingsShim extends OAuth1ShimBase {
         CALORIES("v2/measure", "getactivity", false),
         SLEEP("v2/sleep", "getsummary", false),
         HEART_RATE("measure", "getmeas", true),
-        BLOOD_PRESSURE("measure", "getmeas", true);
+        BLOOD_PRESSURE("measure", "getmeas", true),
+        ACTIVITY("v2/measure","getworkouts",false);
+
 
         private String endpoint;
         private String measureParameter;
@@ -235,13 +238,17 @@ public class WithingsShim extends OAuth1ShimBase {
                     case HEART_RATE:
                         mapper = new WithingsHeartRateDataPointMapper();
                         break;
+                    case ACTIVITY:
+                        mapper = new WithingsDailyWorkoutsDataPointMapper();
+                        break;
                     default:
                         throw new UnsupportedOperationException();
 
                 }
-
+                mapper.includeRaw = shimDataRequest.getIncludeRaw();
                 InputStream content = responseEntity.getContent();
                 JsonNode jsonNode = objectMapper.readValue(content, JsonNode.class);
+
                 List<DataPoint> dataPoints = mapper.asDataPoints(singletonList(jsonNode));
                 return ShimDataResponse.result(WithingsShim.SHIM_KEY,
                         dataPoints);
@@ -261,7 +268,7 @@ public class WithingsShim extends OAuth1ShimBase {
     }
 
     URI createWithingsRequestUri(ShimDataRequest shimDataRequest, String userid,
-            WithingsDataType withingsDataType) {
+                                 WithingsDataType withingsDataType) {
 
         MultiValueMap<String, String> dateTimeMap = new LinkedMultiValueMap<>();
         if (withingsDataType.usesUnixEpochSecondsDate || isPartnerAccessActivityMeasure(withingsDataType)) {

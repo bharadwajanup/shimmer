@@ -26,15 +26,15 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "openmhealth.shim.server")
 public class ShimServerConfig {
 
-    private String callbackUrlBase = "http://localhost:8083";
+    private String callbackUrlBase = "http://localhost:5000";
 
     public String getCallbackUrlBase() {
         return callbackUrlBase;
     }
 
-    public void setCallbackUrlBase(String callbackUrlBase) {
+    /*public void setCallbackUrlBase(String callbackUrlBase) {
         this.callbackUrlBase = callbackUrlBase;
-    }
+    }*/
 
     public String getCallbackUrl(String shimKey, String stateKey) {
         return getCallbackUrl(shimKey) + "?state=" + stateKey;

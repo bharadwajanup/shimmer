@@ -31,7 +31,7 @@ public abstract class WithingsDataPointMapper<T extends SchemaSupport> implement
 
     public final static String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
     protected static final String BODY_NODE_PROPERTY = "body";
-
+    public boolean includeRaw;
     /**
      * A convenience method that creates a {@link DataPoint} from a measure and its metadata.
      *

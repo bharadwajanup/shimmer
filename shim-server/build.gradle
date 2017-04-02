@@ -31,6 +31,7 @@ ext {
 }
 
 dependencies {
+    //compile project(":java-schema-sdk")
     compile project(":java-shim-sdk")
     compile "commons-io:commons-io:2.4"
     compile "org.hibernate:hibernate-validator"

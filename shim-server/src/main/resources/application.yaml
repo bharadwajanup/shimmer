@@ -3,7 +3,7 @@ spring:
     name: Shimmer
   data:
     mongodb:
-      uri: mongodb://mongo:27017/omh_dsu
+      uri: mongodb://34.208.138.16:27017/omh_dsu #DESKTOP-02FJBEM
   jackson:
     serialization:
       indent_output: true
@@ -53,10 +53,10 @@ openmhealth:
     #runkeeper:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
-    #withings:
+    withings:
     #  partnerAccess: true
-    #  clientId: [YOUR_CLIENT_ID]
-    #  clientSecret: [YOUR_CLIENT_SECRET]
+      clientId: 1e10159be17b768e2f1e3ee91666ebd1128c1800ed1b8eef353b87e2657cc
+      clientSecret: 39f65076b59f91127e2b5df9c0c4f04b974b12f09f71b8c4c99df73
     #healthvault:
     #  clientId: [YOUR_CLIENT_ID]
     #googlefit:

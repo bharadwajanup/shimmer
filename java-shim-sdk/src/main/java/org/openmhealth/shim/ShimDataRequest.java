@@ -52,6 +52,8 @@ public class ShimDataRequest {
      */
     private boolean normalize = true;
 
+    private boolean includeRaw = false;
+
 
     public void setDataTypeKey(String dataTypeKey) {
         this.dataTypeKey = dataTypeKey;
@@ -92,5 +94,13 @@ public class ShimDataRequest {
 
     public void setNormalize(boolean normalize) {
         this.normalize = normalize;
+    }
+
+    public boolean getIncludeRaw() {
+        return includeRaw;
+    }
+
+    public void setIncludeRaw(boolean includeRaw) {
+        this.includeRaw = includeRaw;
     }
 }

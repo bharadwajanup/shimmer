@@ -65,6 +65,13 @@ public class LegacyAuthorizationController {
     private ShimServerConfig shimServerProperties;
 
 
+    @RequestMapping(value = "authorization/success", produces = APPLICATION_JSON_VALUE)
+    public String successMessage()
+    {
+        return "Authorization Successful";
+    }
+
+
     /**
      * Retrieve access parameters for the given username/fragment.
      *
@@ -153,6 +160,7 @@ public class LegacyAuthorizationController {
     @RequestMapping(value = "/authorize/{shim}/callback", method = {POST, GET}, produces = APPLICATION_JSON_VALUE)
     public AuthorizationResponse approve(
             @PathVariable("shim") String shim,
+            @RequestParam(value="no_redirect",defaultValue = "false") boolean no_redirect,
             HttpServletRequest servletRequest,
             HttpServletResponse servletResponse)
             throws ShimException {
@@ -188,19 +196,21 @@ public class LegacyAuthorizationController {
                 }
                 return null;
             }
+            if(!no_redirect)
+            {
+                String authorizationStatusURL = AUTH_FAILURE_URL;
+                if (response.getType().equals(AuthorizationResponse.Type.AUTHORIZED)) {
 
-            String authorizationStatusURL = AUTH_FAILURE_URL;
-            if (response.getType().equals(AuthorizationResponse.Type.AUTHORIZED)) {
+                    authorizationStatusURL = AUTH_SUCCESS_URL;
+                }
 
-                authorizationStatusURL = AUTH_SUCCESS_URL;
-            }
-
-            try{
-                servletResponse.sendRedirect(shimServerProperties.getCallbackUrlBase() + authorizationStatusURL);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-                throw new ShimException("Error occurred in redirecting to completion URL");
+                try{
+                    servletResponse.sendRedirect(shimServerProperties.getCallbackUrlBase() + authorizationStatusURL);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                    throw new ShimException("Error occurred in redirecting to completion URL");
+                }
             }
 
             return response;
