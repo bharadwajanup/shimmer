@@ -18,12 +18,12 @@ package org.openmhealth.shim.withings;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.shim.*;
+import org.openmhealth.shim.common.mapper.ShimNotificationDataRequest;
 import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
 import org.openmhealth.shim.withings.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Collections.singletonList;
+import org.openmhealth.shim.withings.domain.WithingsNotifcationType;
 
 
 /**
@@ -117,7 +118,7 @@ public class WithingsShim extends OAuth1ShimBase {
         return new ShimDataType[] {
                 WithingsDataType.HEART_RATE, WithingsDataType.BLOOD_PRESSURE, WithingsDataType.SLEEP,
                 WithingsDataType.CALORIES,
-                WithingsDataType.BODY_HEIGHT, WithingsDataType.STEPS, WithingsDataType.BODY_WEIGHT
+                WithingsDataType.BODY_HEIGHT, WithingsDataType.STEPS, WithingsDataType.BODY_WEIGHT,WithingsDataType.ACTIVITY
         };
 
     }
@@ -144,7 +145,10 @@ public class WithingsShim extends OAuth1ShimBase {
         SLEEP("v2/sleep", "getsummary", false),
         HEART_RATE("measure", "getmeas", true),
         BLOOD_PRESSURE("measure", "getmeas", true),
-        ACTIVITY("v2/measure","getworkouts",false);
+        ACTIVITY("v2/measure","getworkouts",false),
+        SUBSCRIBE("notify","subscribe",false),
+        REVOKE("notify","revoke",false),
+        LIST("notify","list",false);
 
 
         private String endpoint;
@@ -155,6 +159,31 @@ public class WithingsShim extends OAuth1ShimBase {
             this.endpoint = endpoint;
             this.measureParameter = measureParameter;
             this.usesUnixEpochSecondsDate = usesUnixEpochSecondsDate;
+        }
+
+        public String getEndpoint() {
+            return endpoint;
+        }
+
+        public String getMeasureParameter() {
+            return measureParameter;
+        }
+
+    }
+
+    public enum WithingsNotificationAction implements ShimDataType {
+
+        SUBSCRIBE("notify","subscribe"),
+        REVOKE("notify","revoke"),
+        LIST("notify","list");
+
+
+        private String endpoint;
+        private String measureParameter;
+
+        WithingsNotificationAction(String endpoint, String measureParameter) {
+            this.endpoint = endpoint;
+            this.measureParameter = measureParameter;
         }
 
         public String getEndpoint() {
@@ -265,6 +294,89 @@ public class WithingsShim extends OAuth1ShimBase {
         finally {
             get.releaseConnection();
         }
+    }
+
+    @Override
+    public ShimDataResponse subscribe(ShimNotificationDataRequest shimDataRequest) throws ShimException
+    {
+        AccessParameters accessParameters = shimDataRequest.getAccessParameters();
+        String accessToken = accessParameters.getAccessToken();
+        String tokenSecret = accessParameters.getTokenSecret();
+
+        // userid is a unique id associated with each user and returned by Withings in the authorization, this id is
+        // used as a parameter in the request
+        final String userid = accessParameters.getAdditionalParameters().get("userid").toString();
+
+
+        final WithingsNotificationAction withingsNotificationAction;
+        try {
+
+            withingsNotificationAction = WithingsNotificationAction.valueOf(
+                    shimDataRequest.getDataTypeKey().trim().toUpperCase());
+        }
+        catch (NullPointerException | IllegalArgumentException e) {
+            throw new ShimException("Null or Invalid  data Notification type parameter: "
+                    + shimDataRequest.getDataTypeKey()
+                    + " in shimDataRequest, cannot retrieve data.");
+        }
+
+
+
+        final WithingsNotifcationType withingsNotifcationType;
+        try {
+
+            withingsNotifcationType = WithingsNotifcationType.valueOf(
+                    shimDataRequest.getScope().trim().toUpperCase());
+        }
+        catch (NullPointerException | IllegalArgumentException e) {
+            throw new ShimException("Null or Invalid  Scope parameter: "
+                    + shimDataRequest.getDataTypeKey()
+                    + " in shimDataRequest, cannot retrieve data.");
+        }
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        URI uri = createWithingsNotificationUri(shimDataRequest, userid, withingsNotificationAction,withingsNotifcationType);
+        URL url = signUrl(uri.toString(), accessToken, tokenSecret, null);
+        HttpGet get = new HttpGet(url.toString());
+        HttpResponse response;
+        try {
+            response = httpClient.execute(get);
+            HttpEntity responseEntity = response.getEntity();
+
+            return ShimDataResponse
+                    .result(WithingsShim.SHIM_KEY, objectMapper.readTree(responseEntity.getContent()));
+
+        }catch (IOException e) {
+            throw new ShimException("Could not fetch data", e);
+        }
+        finally {
+            get.releaseConnection();
+        }
+
+    }
+
+
+
+    URI createWithingsNotificationUri(ShimNotificationDataRequest shimDataRequest, String userid,
+                                 WithingsNotificationAction withingsNotificationAction,WithingsNotifcationType withingsNotifcationType) {
+
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).pathSegment(
+                withingsNotificationAction.getEndpoint());
+        String measureParameter = withingsNotificationAction.getMeasureParameter();
+        String callbackUrl = shimDataRequest.getCallbackUrl();
+        String comment = shimDataRequest.getComment();
+
+
+        uriComponentsBuilder.queryParam("action", measureParameter).queryParam("userid", userid)
+                .queryParam("callbackurl",callbackUrl)
+                .queryParam("comment",comment)
+                .queryParam("appli",withingsNotifcationType.getMagicNumber());
+        ;
+
+        UriComponents uriComponents = uriComponentsBuilder.build();
+        return uriComponents.toUri();
+
     }
 
     URI createWithingsRequestUri(ShimDataRequest shimDataRequest, String userid,

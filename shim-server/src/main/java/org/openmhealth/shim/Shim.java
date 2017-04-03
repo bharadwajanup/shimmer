@@ -16,6 +16,8 @@
 
 package org.openmhealth.shim;
 
+import org.openmhealth.shim.common.mapper.ShimNotificationDataRequest;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +112,8 @@ public interface Shim {
      * @return Generic object wrapper including timestamp, shim, and results
      */
     ShimDataResponse getData(final ShimDataRequest shimDataRequest) throws ShimException;
+
+    ShimDataResponse subscribe(final ShimNotificationDataRequest shimDataRequest) throws ShimException;
 
 
     /**

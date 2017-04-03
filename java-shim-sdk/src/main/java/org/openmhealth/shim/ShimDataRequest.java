@@ -55,6 +55,8 @@ public class ShimDataRequest {
     private boolean includeRaw = false;
 
 
+
+
     public void setDataTypeKey(String dataTypeKey) {
         this.dataTypeKey = dataTypeKey;
     }
@@ -103,4 +105,6 @@ public class ShimDataRequest {
     public void setIncludeRaw(boolean includeRaw) {
         this.includeRaw = includeRaw;
     }
+
+
 }

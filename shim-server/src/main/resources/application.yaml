@@ -3,7 +3,7 @@ spring:
     name: Shimmer
   data:
     mongodb:
-      uri: mongodb://34.208.138.16:27017/omh_dsu #DESKTOP-02FJBEM
+      uri: mongodb://DESKTOP-02FJBEM:27017/omh_dsu #DESKTOP-02FJBEM 34.208.138.16
   jackson:
     serialization:
       indent_output: true

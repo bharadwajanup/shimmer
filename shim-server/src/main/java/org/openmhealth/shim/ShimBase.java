@@ -16,6 +16,8 @@
 
 package org.openmhealth.shim;
 
+import org.openmhealth.shim.common.mapper.ShimNotificationDataRequest;
+
 /**
  * Base class for shims.
  *
@@ -54,5 +56,10 @@ public abstract class ShimBase implements Shim {
     public boolean isConfigured() {
         ApplicationAccessParameters parameters = findApplicationAccessParameters();
         return parameters.getClientId() != null && parameters.getClientSecret() != null;
+    }
+
+
+    public ShimDataResponse subscribe(ShimNotificationDataRequest shimDataRequest) throws ShimException {
+        throw new UnsupportedOperationException("This Shim does not support this yet.");
     }
 }
