@@ -3,7 +3,10 @@ spring:
     name: Shimmer
   data:
     mongodb:
-      uri: mongodb://DESKTOP-02FJBEM:27017/omh_dsu #DESKTOP-02FJBEM 34.208.138.16
+      #uri: mongodb://DESKTOP-02FJBEM:27017/omh_dsu #DESKTOP-02FJBEM 34.208.138.16
+      uri: mongodb://silo.soic.indiana.edu:12500
+      database: phi_wearable_data
+
   jackson:
     serialization:
       indent_output: true

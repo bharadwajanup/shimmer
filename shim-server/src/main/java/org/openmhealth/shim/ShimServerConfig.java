@@ -32,9 +32,9 @@ public class ShimServerConfig {
         return callbackUrlBase;
     }
 
-    /*public void setCallbackUrlBase(String callbackUrlBase) {
+    public void setCallbackUrlBase(String callbackUrlBase) {
         this.callbackUrlBase = callbackUrlBase;
-    }*/
+    }
 
     public String getCallbackUrl(String shimKey, String stateKey) {
         return getCallbackUrl(shimKey) + "?state=" + stateKey;

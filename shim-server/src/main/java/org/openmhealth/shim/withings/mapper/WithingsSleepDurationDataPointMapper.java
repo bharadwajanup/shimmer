@@ -27,7 +27,6 @@ import java.util.Optional;
 
 import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredLong;
 
 
 /**
@@ -47,12 +46,20 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
      * @return a {@link DataPoint} object containing a {@link SleepDuration} measure with the appropriate values from
      * the JSON node parameter, wrapped as an {@link Optional}
      */
+
+    private Long getOptionalVal(JsonNode node, String path)
+    {
+        Optional<Long> val = asOptionalLong(node,path);
+
+        return val.isPresent()?val.get():0L;
+    }
+
     @Override
     Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode node) {
 
-        Long lightSleepInSeconds = asRequiredLong(node, "data.lightsleepduration");
-        Long deepSleepInSeconds = asRequiredLong(node, "data.deepsleepduration");
-        Long remSleepInSeconds = asRequiredLong(node, "data.remsleepduration");
+        Long lightSleepInSeconds = getOptionalVal(node, "data.lightsleepduration");
+        Long deepSleepInSeconds = getOptionalVal(node, "data.deepsleepduration");
+        Long remSleepInSeconds = getOptionalVal(node, "data.remsleepduration");
 
         Long totalSleepInSeconds = lightSleepInSeconds + deepSleepInSeconds + remSleepInSeconds;
 

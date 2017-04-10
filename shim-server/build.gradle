@@ -31,7 +31,6 @@ ext {
 }
 
 dependencies {
-    //compile project(":java-schema-sdk")
     compile project(":java-shim-sdk")
     compile "commons-io:commons-io:2.4"
     compile "org.hibernate:hibernate-validator"
@@ -47,7 +46,7 @@ dependencies {
     compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
     compile "oauth.signpost:signpost-core:${signpostVersion}"
     compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.springframework.data:spring-data-mongodb"
+        compile "org.springframework.data:spring-data-mongodb"
     compile "org.springframework.security.oauth:spring-security-oauth"
     compile "org.springframework.security.oauth:spring-security-oauth2"
     compile "org.springframework:spring-web"

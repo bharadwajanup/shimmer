@@ -25,6 +25,7 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjectMapper;
 
@@ -33,6 +34,7 @@ import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjec
  * @author Emerson Farrugia
  */
 @SpringBootApplication
+@EnableScheduling
 @EnableConfigurationProperties
 @EnableMongoRepositories("org.openmhealth.shim")
 @ComponentScan(basePackages = {"org.openmhealth.shim", "org.openmhealth.shimmer"})
@@ -42,6 +44,7 @@ public class Application extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);
     }
+
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

@@ -2,15 +2,15 @@ package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
-//import org.openmhealth.shim.withings.domain.WithingsWorkoutCategory;
-
-import org.openmhealth.schema.domain.omh.*;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
+
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
+
+//import org.openmhealth.shim.withings.domain.WithingsWorkoutCategory;
 
 /**
  * Created by Bharadwaj on 3/31/2017.
@@ -29,7 +29,12 @@ public class WithingsDailyWorkoutsDataPointMapper extends WithingsListDataPointM
         JsonNode dataNode = node.get("data");
 
         double calories = asRequiredDouble(dataNode,"calories");
-        double distance = asRequiredDouble(dataNode,"distance");
+        double distance;
+        Optional<Double> distanceVal = asOptionalDouble(dataNode,"distance");
+        if (distanceVal.isPresent())
+            distance = distanceVal.get();
+        else
+            distance = 0;
 
         builder.setCaloriesBurned(new KcalUnitValue(KcalUnit.KILOCALORIE,calories));
         builder.setDistance(new LengthUnitValue(LengthUnit.METER,distance));

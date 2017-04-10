@@ -25,6 +25,7 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.common.mapper.ShimNotificationDataRequest;
 import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
+import org.openmhealth.shim.withings.domain.WithingsNotifcationType;
 import org.openmhealth.shim.withings.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,13 +41,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Collections.singletonList;
-import org.openmhealth.shim.withings.domain.WithingsNotifcationType;
 
 
 /**
@@ -124,6 +121,18 @@ public class WithingsShim extends OAuth1ShimBase {
     }
 
     @Override
+    public List<String> getEndPoints(String notificationType)
+    {
+        List<WithingsDataType> dataTypes =  WithingsNotifcationType.valueOf(notificationType).endPoints;
+        List<String> stringDataTypes = new ArrayList<>();
+        for(WithingsDataType dataType: dataTypes)
+        {
+            stringDataTypes.add(dataType.name());
+        }
+        return stringDataTypes;
+    }
+
+    @Override
     protected void loadAdditionalAccessParameters(
 
             HttpServletRequest request, AccessParameters accessParameters) {
@@ -145,10 +154,7 @@ public class WithingsShim extends OAuth1ShimBase {
         SLEEP("v2/sleep", "getsummary", false),
         HEART_RATE("measure", "getmeas", true),
         BLOOD_PRESSURE("measure", "getmeas", true),
-        ACTIVITY("v2/measure","getworkouts",false),
-        SUBSCRIBE("notify","subscribe",false),
-        REVOKE("notify","revoke",false),
-        LIST("notify","list",false);
+        ACTIVITY("v2/measure","getworkouts",false);
 
 
         private String endpoint;

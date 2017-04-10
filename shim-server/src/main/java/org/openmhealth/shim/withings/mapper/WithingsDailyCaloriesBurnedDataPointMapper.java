@@ -23,7 +23,7 @@ import java.time.*;
 import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredLong;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
 /**
@@ -58,7 +58,7 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
     @Override
     Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode node) {
 
-        long caloriesBurnedValue = asRequiredLong(node, "calories");
+        double caloriesBurnedValue = asRequiredDouble(node, "calories");
         CaloriesBurned.Builder caloriesBurnedBuilder =
                 new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, caloriesBurnedValue));
 

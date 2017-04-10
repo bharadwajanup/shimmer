@@ -115,6 +115,8 @@ public interface Shim {
 
     ShimDataResponse subscribe(final ShimNotificationDataRequest shimDataRequest) throws ShimException;
 
+    List<String> getEndPoints(String notificationType);
+
 
     /**
      * Check if this shim is properly configured.

@@ -18,6 +18,8 @@ package org.openmhealth.shim;
 
 import org.openmhealth.shim.common.mapper.ShimNotificationDataRequest;
 
+import java.util.List;
+
 /**
  * Base class for shims.
  *
@@ -60,6 +62,11 @@ public abstract class ShimBase implements Shim {
 
 
     public ShimDataResponse subscribe(ShimNotificationDataRequest shimDataRequest) throws ShimException {
+        throw new UnsupportedOperationException("This Shim does not support this yet.");
+    }
+
+    public List<String> getEndPoints(String notificationType)
+    {
         throw new UnsupportedOperationException("This Shim does not support this yet.");
     }
 }
