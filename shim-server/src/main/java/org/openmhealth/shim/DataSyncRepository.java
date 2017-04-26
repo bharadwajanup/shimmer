@@ -7,8 +7,10 @@ import java.util.List;
 /**
  * Created by Bharadwaj on 4/6/2017.
  */
-public interface DataSyncRepository extends MongoRepository<DataSync,String>
+public interface DataSyncRepository extends MongoRepository<DataSync,String>,DataSyncRepositoryCustom
 {
     List<DataSync> findAllByUpdateAvailableTrue();
-
+    DataSync findAllByUserId(String id);
+    List<DataSync> findByUserIdIn(List<String> ids);
 }
+

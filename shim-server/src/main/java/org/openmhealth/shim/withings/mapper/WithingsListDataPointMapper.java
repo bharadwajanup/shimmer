@@ -50,7 +50,7 @@ public abstract class WithingsListDataPointMapper<T extends SchemaSupport> exten
      * an item in the list
      */
     @Override
-    public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
+    public final List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
         checkNotNull(responseNodes);
         checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");

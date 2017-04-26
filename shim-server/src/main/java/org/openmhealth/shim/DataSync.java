@@ -1,13 +1,16 @@
 package org.openmhealth.shim;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Map;
 
 /**
  * Created by Bharadwaj on 4/6/2017.
  */
+@Document
 public class DataSync {
+
     @Id
     private String id;
     private String userId;

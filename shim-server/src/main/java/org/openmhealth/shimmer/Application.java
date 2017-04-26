@@ -25,7 +25,11 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executor;
 
 import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjectMapper;
 
@@ -38,6 +42,7 @@ import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjec
 @EnableConfigurationProperties
 @EnableMongoRepositories("org.openmhealth.shim")
 @ComponentScan(basePackages = {"org.openmhealth.shim", "org.openmhealth.shimmer"})
+@EnableAsync
 public class Application extends SpringBootServletInitializer {
 
     @Override
@@ -48,6 +53,17 @@ public class Application extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+    }
+
+
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("Thread-");
+        executor.initialize();
+        return executor;
     }
 
     // TODO look into Jackson2ObjectMapperBuilder to support Spring Boot configuration, e.g. for indentation
