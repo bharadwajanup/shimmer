@@ -30,7 +30,9 @@ However, core shimmer does not support data storage and notifications offered by
 * Notification support - using the 'notify' endpoint, you can subscribe to notifications. (Currently, only withings has the implementation. Extend it for other vendors).
 * New endpoints and mappers - Added missing endpoints and mappers that are needed for our application.
 * Data storage - shimmer already needs a mongodb instance to run. It is possible to extend the feature to support data storage as well. It is not feasible to continously poll for new data especially when the application has to scale for thousands of users. A better way would be to listen for notifications, and do a full sweep of users who synced and store their data into mongodb. That brings us to schedulers.
-* Scheduling - Once a user is subscribed to get notifications, we store them in the 'DataSync' collection which maintains the state information per user. Periodically, we query the data to fetch users having new data and perform API requests. 
+* Scheduling - Once a user is subscribed to get notifications, we store them in the 'DataSync' collection which maintains the state information per user. Periodically, we query the data to fetch users having new data and perform API requests. To avoid head of the line blocking due to API limits, scheduling happens asynchronously and each vendor is assigned with a new thread.
+* API Rate Limiter - Blocks the execution if the specified API rates are reached. YOu need to customize this call for each vendor.
+
 
 
 
