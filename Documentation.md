@@ -42,4 +42,5 @@ However, core shimmer does not support data storage and notifications offered by
 * Refer to the readme file on adding developer keys for different vendors.
 * install-natively.sh won't work for windows (even with git shell). You need to manually run the commands from the script.
 * The 'data' endpoint is not secure. It is strongly recommended that the endpoint is closed or authentication is implemented.
+* Modify the ScheduledTasks.java to suit your scheduling needs (or add configuration to handle it.)
   
